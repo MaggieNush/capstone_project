@@ -7,15 +7,15 @@ class OrderItemInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'client', 'sales_person', 'order_date', 'total_amount', 'payment_status', 'created_at')
+    list_display = ('id', 'client', 'salesperson', 'order_date', 'total_amount', 'payment_status', 'created_at')
     list_filter = ('payment_status', 'order_date', 'salesperson__user__username', 'client__name')
     search_fields = ('client__name', 'salesperson__user__username')
     inlines = [OrderItemInline]
-    raw_id_fields = ('sales_person',)  # Useful for large number of sales persons
+    raw_id_fields = ('client','salesperson',)  # Useful for large number of clients and salespersons
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'client', 'order', 'amount', 'payment_date', 'recorded_by_salesperson' 'created_at')
-    list_filter = ('payment_date', 'client__name', 'order__id')
-    search_fields = ('client__name', 'order__id')
-    raw_id_fields = ('client', 'order')
+    list_display = ('id', 'client', 'order', 'amount_paid', 'payment_date', 'recorded_by_salesperson', 'created_at')
+    list_filter = ('payment_date', 'payment_method', 'client__name', 'recorded_by_salesperson__user__username')
+    search_fields = ('client__name', 'recorded_by_salesperson__user__username')
+    raw_id_fields = ('client', 'order', 'recorded_by_salesperson')

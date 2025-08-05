@@ -23,12 +23,12 @@ class Client(models.Model):
     address = models.TextField(null=True, blank=True)
     client_type = models.CharField(max_length=20, choices=CLIENT_TYPE_CHOICES, default='retail')
     is_new_client = models.BooleanField(default=True)
-    assigned_sales_person = models.ForeignKey(
+    assigned_salesperson = models.ForeignKey(
         UserProfile,
-        on_delete = models.SET_NULL, # If sales person is deleted the client stays unassigned
+        on_delete = models.SET_NULL, # If salesperson is deleted the client stays unassigned
         related_name = 'clients',
-        limit_choices_to= {'role': 'sales_person'}, # Only allow sales persons to be assigned
-        null=True, # can be null if no sales person is assigned
+        limit_choices_to= {'role': 'salesperson'}, # Only allow salespersons to be assigned
+        null=True, # can be null if no salesperson is assigned
         blank=True
     )
 

@@ -13,11 +13,11 @@ class Order(models.Model):
     ]
 
     client = models.ForeignKey(Client, on_delete=models.PROTECT, related_name='orders')
-    sales_person = models.ForeignKey(
+    salesperson = models.ForeignKey(
         UserProfile,
-        on_delete=models.PROTECT, # If sales person is deleted, the sale remains but without a sales person
+        on_delete=models.PROTECT, # If salesperson is deleted, the sale remains but without a salesperson
         related_name='recorded_orders',
-        limit_choices_to={'role': 'sales_person'},  # Only allow sales persons to record sales
+        limit_choices_to={'role': 'salesperson'},  # Only allow salespersons to record sales
     )
 
     order_date = models.DateTimeField(auto_now_add=True)
@@ -31,7 +31,7 @@ class Order(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Order {self.id} for {self.client.name} by {self.sales_person.user.username} on {self.order_date.strftime('%Y-%m-%d %H:%M:%S')}"
+        return f"Order {self.id} for {self.client.name} by {self.salesperson.user.username} on {self.order_date}"
 
 class OrderItem(models.Model):
     """
@@ -53,7 +53,7 @@ class Payment(models.Model):
     Records payments by a client
     Can be linked to an order or a general payment
     """
-    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='payments'),
+    client = models.ForeignKey(Client, on_delete=models.PROTECT, related_name='payments')
     order = models.ForeignKey(
         Order, 
         on_delete=models.SET_NULL, # If order is deleted, payment remains but unlinked 
@@ -64,11 +64,11 @@ class Payment(models.Model):
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
     payment_date = models.DateTimeField()
     payment_method = models.CharField(max_length=50, null=True, blank=True)  # e.g., Cash, Mpesa, Bank Transfer
-    recorded_by_sales_person = models.ForeignKey(
+    recorded_by_salesperson = models.ForeignKey(
         UserProfile,
-        on_delete=models.PROTECT, # Protects payment if a sales person is deleted
+        on_delete=models.PROTECT, # Protects payment if a salesperson is deleted
         related_name='recorded_payments',
-        limit_choices_to={'role': 'sales_person'},  # Only allow sales persons to record payments
+        limit_choices_to={'role': 'salesperson'},  # Only allow salespersons to record payments
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
