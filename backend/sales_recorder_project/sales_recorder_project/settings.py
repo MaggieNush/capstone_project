@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'users',
     'core',
     'corsheaders',
+    'rest_framework.authtoken',  # For token-based authentication
 ]
 
 MIDDLEWARE = [

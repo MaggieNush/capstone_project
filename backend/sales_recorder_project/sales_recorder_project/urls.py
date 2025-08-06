@@ -6,5 +6,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/clients/', include('clients.urls')), # Include client-related endpoints
     path('api/v1/users/', include('users.urls')), # Include user-related endpoints
-    path('api/v1/token-auth/', obtain_auth_token), # Token authentication endpoint
+    path('api/v1/auth/login/', obtain_auth_token), # Token authentication endpoint
 ]
