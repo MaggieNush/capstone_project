@@ -8,7 +8,7 @@ class IsAdminUser(permissions.BasePermission):
         # Check if the user is authenticated and has the admin role
         return request.user and request.user.is_authenticated and hasattr(request.user, 'profile') and request.user.profile.role == 'admin'
     
-class IsSalesPerson(permissions.BasePermission):
+class IsSalesperson(permissions.BasePermission):
     """"
     Custom permission to only allow salespersons to access certain views.
     """
