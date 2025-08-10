@@ -1,36 +1,72 @@
 from rest_framework import permissions
+from django.db.models import Q # Import Q object for complex lookups
 
 class IsAdminUser(permissions.BasePermission):
-    """"
-    Custom permission to only allow admin users to access certain views.
+    """
+    Custom permission to only allow admin users to access.
     """
     def has_permission(self, request, view):
-        # Check if the user is authenticated and has the admin role
         return request.user and request.user.is_authenticated and hasattr(request.user, 'profile') and request.user.profile.role == 'admin'
-    
+
 class IsSalesperson(permissions.BasePermission):
-    """"
-    Custom permission to only allow salespersons to access certain views.
+    """
+    Custom permission to only allow salesperson users to access.
     """
     def has_permission(self, request, view):
-        # Check if the user is authenticated and has the salesperson role
         return request.user and request.user.is_authenticated and hasattr(request.user, 'profile') and request.user.profile.role == 'salesperson'
-    
+
 class IsOwnerOfClient(permissions.BasePermission):
-    """"
-    Custom permission to only allow the owner of a client to access certain views.
-    Admin can access all clients, but salespersons can only access clients assigned to them.
+    """
+    Custom permission to only allow salespersons to view/edit their own clients.
+    Admins can view/edit all clients.
     """
     def has_object_permission(self, request, view, obj):
-        # Read permissions are allowed to any request, so we'll always allow GET, HEAD or OPTIONS requests.
+        # Read permissions are allowed to any authenticated user (salesperson or admin)
         if request.method in permissions.SAFE_METHODS:
             return request.user and request.user.is_authenticated
-        
-        # Write permissions are only allowed to the owner of the client or admin users.
+
+        # Write permissions are only allowed to the owner of the client or an admin
         if request.user and request.user.is_authenticated:
             if hasattr(request.user, 'profile') and request.user.profile.role == 'admin':
                 return True # Admin can modify any client
-            return object.assigned_salesperson and obj.assigned_salesperson.user == request.user
+            # Salesperson can edit clients assigned to them, or new clients they requested (before approval)
+            # Assuming 'obj' is a Client instance
+            return (obj.assigned_salesperson and obj.assigned_salesperson.user == request.user) or \
+                   (obj.status == 'pending_approval' and request.user.profile.role == 'salesperson' and obj.assigned_salesperson is None)
         return False
-        # Check if the user is the assigned salesperson for the client
-        return obj.assigned_salesperson == request.user.profile
+
+class IsOwnerOfOrder(permissions.BasePermission):
+    """
+    Custom permission to only allow salespersons to view/edit their own orders.
+    Admins can view/edit all orders.
+    """
+    def has_object_permission(self, request, view, obj):
+        # Read permissions are allowed to any authenticated user (salesperson or admin)
+        if request.method in permissions.SAFE_METHODS:
+            return request.user and request.user.is_authenticated
+
+        # Write permissions (PATCH for payment status) are only allowed to the owner of the order or an admin
+        if request.user and request.user.is_authenticated:
+            if hasattr(request.user, 'profile') and request.user.profile.role == 'admin':
+                return True # Admin can modify any order
+            # Salesperson can only modify their own orders
+            return obj.salesperson and obj.salesperson.user == request.user
+        return False
+
+class IsOwnerOfPayment(permissions.BasePermission):
+    """
+    Custom permission to only allow salespersons to view/edit their own payments.
+    Admins can view/edit all payments.
+    """
+    def has_object_permission(self, request, view, obj):
+        # Read permissions are allowed to any authenticated user (salesperson or admin)
+        if request.method in permissions.SAFE_METHODS:
+            return request.user and request.user.is_authenticated
+
+        # Write permissions are only allowed to the salesperson who recorded the payment or an admin
+        if request.user and request.user.is_authenticated:
+            if hasattr(request.user, 'profile') and request.user.profile.role == 'admin':
+                return True # Admin can modify any payment
+            # Salesperson can only modify payments they recorded
+            return obj.recorded_by_salesperson and obj.recorded_by_salesperson.user == request.user
+        return False
