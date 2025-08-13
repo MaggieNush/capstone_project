@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { use, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Input from '../common/Input';
 import Button from '../common/Button';
+import useAuthStore from '../../store/authStore';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -8,14 +10,25 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Get login information from authStore
+  const login = useAuthStore((state) => state.login);
+  const navigate = useNavigate(); // Initialize navigation hook
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(''); // Clear previous errors
     setLoading(true); // Set loading to true at the start of the API call
 
+    // Debugging logs
+    console.log('---Debugging login payload---');
     console.log('Username state:', username);
     console.log('Password state:', password);
-    console.log('JSON payload being sent', JSON.stringify({ username, password }));
+    const payload = { username, password };
+    console.log('Raw payload object:', payload);
+    const jsonPayload = JSON.stringify(payload);
+    console.log('JSON payload:', jsonPayload);
+    console.log('---End of Debugging Logs---');
+
 
     try {
       // Django API login endpoint
@@ -24,7 +37,7 @@ const LoginPage = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: jsonPayload, // Use the JSON payload directly
       });
 
       const data = await response.json();
@@ -32,11 +45,25 @@ const LoginPage = () => {
       if (response.ok) {
         // Handle successful login
         console.log('Login successful:', data);
-        // TODO: Replace alert() with a custom modal/notification
-        // alert('Login successful! Check console for token and user data.'); 
-        console.log('Login successful! Now integrate with Zustand and redirect.');
-        // TODO: Store token and user role (e.g., using Zustand)
-        // TODO: Redirect to dashboard based on role (this will be done in the next step with Zustand)
+
+        // Store token and user role (e.g., using Zustand)
+        const userData = {
+            id: data.user_id,
+            username: data.username,
+            role: data.role, // Assuming the API returns a role field
+        };
+        login(data.token, userData); // Call the login action from authStore
+
+        // Redirect based on user role
+        if (data.role === 'admin') {
+            navigate('/admin-dashboard'); // Redirect to admin dashboard
+        } else if (data.role === 'salesperson') {
+            navigate('/sales-dashboard'); // Redirect to salesperson dashboard
+        } else {
+            // Fallbacks for unexpected roles
+            setError('Unexpected user role. Please contact support.');
+            useAuthStore.getState().logout(); // Clear session if role is unexpected
+        }
       } else {
         // Handle login errors
         // Check for specific error messages from Django REST Framework
@@ -80,7 +107,6 @@ const LoginPage = () => {
         {/* Adjusted margin for better spacing */}
         {error && <p className='text-red-500 text-sm mb-4'>{error}</p>}
 
-        {/* REMOVED: Redundant onClick={handleSubmit} - form's onSubmit handles this */}
         <Button type="submit" disabled={loading} className='w-full'>
           {loading ? 'Logging in...' : 'Login'}
         </Button>
