@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from .models import User, UserProfile
+from rest_framework.authtoken.models import Token
 
 class UserProfileSerializer(serializers.ModelSerializer):
     """
@@ -26,7 +27,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     """
     Serializer for user registration(admin creating salesperson)
     """
-    password = serializers.CharField(write_only=True, min_length=8)
+    password = serializers.CharField(write_only=True)
     role = serializers.ChoiceField(choices=UserProfile.ROLE_CHOICES, write_only=True) # Role for registration
 
     class Meta:
@@ -57,19 +58,26 @@ class LoginSerializer(serializers.Serializer):
         username = data.get('username')
         password = data.get('password')
 
-        if username and password:
-            user = authenticate(request=self.context.get('request'),
-                                username=username, password=password)
-            if not user:
-                msg = 'Unable to log in with provided credentials.'
-                raise serializers.ValidationError(msg, code='authorization')
-            else:
-                msg = 'Must include "username" and "password".'
-                raise serializers.ValidationError(msg, code='authorization')
-            
-            data['user'] = user
-            return data
-        
+        # 
+        if not username:
+            raise serializers.ValidationError('Username field is required.', code='authorization')
+        if not password:
+            raise serializers.ValidationError('Password field is required.', code='authorization')
+
+        user = authenticate(username=username, password=password)
+
+        if not user:
+            # If authentication fails, it means credentials are wrong
+            msg = 'Unable to log in with provided credentials.'
+            raise serializers.ValidationError(msg, code='authentication') # Changed code to 'authentication'
+
+        # If authentication succeeds, populate the user and return data
+        data['user'] = user
+        data['token'] = Token.objects.get_or_create(user=user)[0].key # Get or create token
+        data['user_id'] = user.pk
+        data['role'] = user.profile.role if hasattr(user, 'profile') else None # Ensure role is added
+
+        return data # Return the full validated data with new fields
         
 
 
