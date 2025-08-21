@@ -55,10 +55,10 @@ const LoginPage = () => {
         login(data.token, userData); // Call the login action from authStore
 
         // Redirect based on user role
-        if (data.role === 'admin') {
+        if (userData.role === 'admin') {
             navigate('/admin-dashboard'); // Redirect to admin dashboard
-        } else if (data.role === 'salesperson') {
-            navigate('/sales-dashboard'); // Redirect to salesperson dashboard
+        } else if (userData.role === 'salesperson') {
+            navigate('/salesperson-dashboard'); // Redirect to salesperson dashboard
         } else {
             // Fallbacks for unexpected roles
             setError('Unexpected user role. Please contact support.');

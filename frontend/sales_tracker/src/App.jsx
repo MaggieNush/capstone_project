@@ -1,11 +1,11 @@
-// src/App.jsx
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import LoginPage from './components/Auth/LoginPage'; 
 import SalespersonDashboard from './components/dashboard/SalespersonDashboard'; // Import SalespersonDashboard
 import AdminDashboard from './components/dashboard/AdminDashboard'; // Import AdminDashboard
 import ProtectedRoute from './components/Auth/ProtectedRoute'; // Import ProtectedRoute for route protection
 import Layout from './components/layout/Layout'; // Import Layout for consistent structure
+import ClientListPage from './components/clients/ClientListPage'; // Import ClientListPage
 import useAuthStore from './store/authStore'; // Import auth store for authentication state
 import './index.css'; 
 
@@ -15,22 +15,6 @@ function App() {
   const isAdmin = useAuthStore((state) => state.isAdmin());
   const isSalesperson = useAuthStore((state) => state.isSalesperson());
   const navigate = useNavigate(); // For root redirection
-
-  useEffect(() => {
-    // Redirect logic on initial load
-    if (isAuthenticated) {
-      if (isAdmin) {
-        navigate('/admin-dashboard', { replace: true });
-      } else if (isSalesperson) {
-        navigate('/salesperson-dashboard', { replace: true });
-      }
-    } else {
-      // If not authenticated, redirect to login page
-      if (window.location.pathname !== '/') {
-        navigate('/', { replace: true });
-      }
-    }
-  }, [isAuthenticated, isAdmin, isSalesperson, navigate]); // Dependency array for useEffect
 
   return (
       <div className='flex flex-col min-h-screen'>
@@ -43,9 +27,8 @@ function App() {
           <Route element={<Layout />}> {/* Nested Layout under ProtectedRoute */}
             <Route path="/salesperson-dashboard" element={<SalespersonDashboard />} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
-            {/* Future authenticated routes will go here, nested under the Layout */}
             {/* Salesperson specific routes */}
-            <Route path="/clients" element={<h2 className="text-2xl font-bold">My Clients Page (Coming Soon)</h2>} />
+            <Route path="/clients" element={<ClientListPage />} /> {/* ClientListPage for viewing clients */}
             <Route path="/new-sale" element={<h2 className="text-2xl font-bold">Record New Sale Page (Coming Soon)</h2>} />
             <Route path="/new-client-request" element={<h2 className="text-2xl font-bold">New Client Request Page (Coming Soon)</h2>} />
             <Route path="/sales-reports" element={<h2 className="text-2xl font-bold">Sales Reports Page (Coming Soon)</h2>} />

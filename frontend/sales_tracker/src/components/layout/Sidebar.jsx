@@ -1,10 +1,20 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import useAuthStore from "../../store/authStore";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     const isSalesperson = useAuthStore((state) => state.isSalesperson());
     const isAdmin = useAuthStore((state) => state.isAdmin());
+    const navigate = useNavigate();
+
+
+
+    const handleLinkClick = (path) => {
+    if (isSidebarOpen) { // Only close if sidebar is currently open (for mobile)
+      toggleSidebar();
+    }
+    navigate(path); // Navigate to the clicked link
+};
 
     return (
     <>
@@ -47,7 +57,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                       isActive ? 'bg-blue-600' : 'hover:bg-gray-700'
                     }`
                   }
-                  onClick={toggleSidebar}
+                  onClick={handleLinkClick}
                 >
                   My Clients
                 </NavLink>
@@ -60,7 +70,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                       isActive ? 'bg-blue-600' : 'hover:bg-gray-700'
                     }`
                   }
-                  onClick={toggleSidebar}
+                  onClick={handleLinkClick}
                 >
                   Record New Sale
                 </NavLink>
@@ -73,7 +83,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                       isActive ? 'bg-blue-600' : 'hover:bg-gray-700'
                     }`
                   }
-                  onClick={toggleSidebar}
+                  onClick={handleLinkClick}
                 >
                   Request New Client
                 </NavLink>
@@ -86,7 +96,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                       isActive ? 'bg-blue-600' : 'hover:bg-gray-700'
                     }`
                   }
-                  onClick={toggleSidebar}
+                  onClick={handleLinkClick}
                 >
                   Sales Reports
                 </NavLink>
@@ -104,7 +114,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                       isActive ? 'bg-blue-600' : 'hover:bg-gray-700'
                     }`
                   }
-                  onClick={toggleSidebar}
+                  onClick={handleLinkClick}
                 >
                   Dashboard
                 </NavLink>
@@ -117,7 +127,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                       isActive ? 'bg-blue-600' : 'hover:bg-gray-700'
                     }`
                   }
-                  onClick={toggleSidebar}
+                  onClick={handleLinkClick}
                 >
                   Manage Salespersons
                 </NavLink>
@@ -130,7 +140,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                       isActive ? 'bg-blue-600' : 'hover:bg-gray-700'
                     }`
                   }
-                  onClick={toggleSidebar}
+                  onClick={handleLinkClick}
                 >
                   Pending Clients
                 </NavLink>
@@ -143,7 +153,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                       isActive ? 'bg-blue-600' : 'hover:bg-gray-700'
                     }`
                   }
-                  onClick={toggleSidebar}
+                  onClick={handleLinkClick}
                 >
                   Manage Flavors
                 </NavLink>
@@ -156,7 +166,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                       isActive ? 'bg-blue-600' : 'hover:bg-gray-700'
                     }`
                   }
-                  onClick={toggleSidebar}
+                  onClick={handleLinkClick}
                 >
                   Overall Reports
                 </NavLink>
