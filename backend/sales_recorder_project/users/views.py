@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from django.contrib.auth import login
 from .serializers import RegisterSerializer, LoginSerializer, UserSerializer
 from .models import User, UserProfile
-from .permissions import IsAdminUser, IsSalesperson # Import your custom permissions
+from .permissions import IsAdminUser, IsSalesperson # Import custom permissions
 
 class RegisterAPI(generics.GenericAPIView):
     """
