@@ -1,12 +1,14 @@
 import React from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import LoginPage from './components/Auth/LoginPage'; 
-import SalespersonDashboard from './components/dashboard/SalespersonDashboard'; // Import SalespersonDashboard
-import AdminDashboard from './components/dashboard/AdminDashboard'; // Import AdminDashboard
-import ProtectedRoute from './components/Auth/ProtectedRoute'; // Import ProtectedRoute for route protection
-import Layout from './components/layout/Layout'; // Import Layout for consistent structure
-import ClientListPage from './components/clients/ClientListPage'; // Import ClientListPage
-import useAuthStore from './store/authStore'; // Import auth store for authentication state
+import SalespersonDashboard from './components/dashboard/SalespersonDashboard'; 
+import AdminDashboard from './components/dashboard/AdminDashboard'; 
+import ProtectedRoute from './components/Auth/ProtectedRoute'; 
+import Layout from './components/layout/Layout'; 
+import ClientListPage from './components/clients/ClientListPage'; 
+import ClientDetailPage from './components/clients/ClientDetailPage'; 
+import EditClientPage from './components/clients/EditClient';
+import useAuthStore from './store/authStore'; 
 import './index.css'; 
 
 function App() {
@@ -27,8 +29,13 @@ function App() {
           <Route element={<Layout />}> {/* Nested Layout under ProtectedRoute */}
             <Route path="/salesperson-dashboard" element={<SalespersonDashboard />} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
-            {/* Salesperson specific routes */}
+
+            {/* Client management routes */}
             <Route path="/clients" element={<ClientListPage />} /> {/* ClientListPage for viewing clients */}
+            <Route path="/clients/:clientId" element={<ClientDetailPage />} /> {/* ClientDetailPage for viewing client details */}
+            <Route path="/clients/:clientId/edit" element={<EditClientPage />} /> {/* EditClientPage for editing client details */}
+
+            {/* Salesperson specific routes */}
             <Route path="/new-sale" element={<h2 className="text-2xl font-bold">Record New Sale Page (Coming Soon)</h2>} />
             <Route path="/new-client-request" element={<h2 className="text-2xl font-bold">New Client Request Page (Coming Soon)</h2>} />
             <Route path="/sales-reports" element={<h2 className="text-2xl font-bold">Sales Reports Page (Coming Soon)</h2>} />
