@@ -7,6 +7,10 @@ import ProtectedRoute from './components/Auth/ProtectedRoute';
 import Layout from './components/layout/Layout'; 
 import ClientListPage from './components/clients/ClientListPage'; 
 import ClientDetailPage from './components/clients/ClientDetailPage'; 
+import CreateClientPage from './components/clients/CreateClientPage';
+import PendingClientsPage from './components/clients/PendingClientsPage';
+import RecordNewSalePage from './components/clients/RecordNewSalePage';
+import SalesReportsPage from './sales/SalesReportsPage';
 import EditClientPage from './components/clients/EditClient';
 import useAuthStore from './store/authStore'; 
 import './index.css'; 
@@ -32,17 +36,20 @@ function App() {
 
             {/* Client management routes */}
             <Route path="/clients" element={<ClientListPage />} /> {/* ClientListPage for viewing clients */}
+            <Route path="/clients/new" element={<CreateClientPage />} /> {/* CreateClientPage for adding new clients */}
             <Route path="/clients/:clientId" element={<ClientDetailPage />} /> {/* ClientDetailPage for viewing client details */}
             <Route path="/clients/:clientId/edit" element={<EditClientPage />} /> {/* EditClientPage for editing client details */}
 
+            {/* Sales Routes */}
+            <Route path="/new-sale" element={<RecordNewSalePage />} />
+
             {/* Salesperson specific routes */}
-            <Route path="/new-sale" element={<h2 className="text-2xl font-bold">Record New Sale Page (Coming Soon)</h2>} />
             <Route path="/new-client-request" element={<h2 className="text-2xl font-bold">New Client Request Page (Coming Soon)</h2>} />
-            <Route path="/sales-reports" element={<h2 className="text-2xl font-bold">Sales Reports Page (Coming Soon)</h2>} />
+            <Route path="/sales-reports" element={<SalesReportsPage />} />
 
             {/* Admin specific routes */}
+            <Route path="/pending-clients" element={<PendingClientsPage />} /> {/* PendingClientsPage for viewing pending clients */}
             <Route path="/manage-salespersons" element={<h2 className="text-2xl font-bold">Manage Salespersons Page (Coming Soon)</h2>} />
-            <Route path="/pending-clients" element={<h2 className="text-2xl font-bold">Pending Clients Page (Coming Soon)</h2>} />
             <Route path="/manage-flavors" element={<h2 className="text-2xl font-bold">Manage Flavors Page (Coming Soon)</h2>} />
             <Route path="/overall-reports" element={<h2 className="text-2xl font-bold">Overall Reports Page (Coming Soon)</h2>} />
           </Route>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from 'react-router-dom'; 
 import Button from '../common/Button';
+import useAuthStore from '../../store/authStore';
 
 const ClientDetailPage = () => {
     const {clientId} = useParams(); // Get client id from url
@@ -144,10 +145,9 @@ const ClientDetailPage = () => {
         <Button onClick={() => navigate('/clients')} className="bg-gray-500 hover:bg-gray-600">
           Back to List
         </Button>
-        {/* Future Edit Client Button */}
-        {/* <Button onClick={() => navigate(`/clients/${clientId}/edit`)} className="bg-yellow-500 hover:bg-yellow-600">
+        <Button onClick={() => navigate(`/clients/${clientId}/edit`)} className="bg-yellow-500 hover:bg-yellow-600">
           Edit Client
-        </Button> */}
+        </Button> 
       </div>
     </div>
   );

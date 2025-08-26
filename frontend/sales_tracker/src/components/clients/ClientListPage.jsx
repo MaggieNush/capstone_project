@@ -12,6 +12,7 @@ const ClientListPage = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [filterType, setFilterType] = useState(""); // Client type whether wholesale or retail
     const token = useAuthStore((state) => state.token); // Get the authentication token
+    const userRole = useAuthStore((state) => state.user?.role); // Get user role
     const navigate = useNavigate(); // For navigation
 
     useEffect(() => {
@@ -62,6 +63,10 @@ const ClientListPage = () => {
     navigate(`/clients/${clientId}`);
   };
 
+  const handleCreateNewClient = () => {
+    navigate('/clients/new'); // Navigate to the new client creation page
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-full">
@@ -83,7 +88,15 @@ const ClientListPage = () => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md w-full">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">My Clients</h2>
+      <div className="flex justify-between items-center mb-6"> {/* New flex container */}
+        <h2 className="text-3xl font-bold text-gray-800">My Clients</h2>
+        {/* Render "Create New Client" button for salespersons and admins */}
+        {(userRole === 'salesperson' || userRole === 'admin') && (
+          <Button onClick={handleCreateNewClient} className="bg-green-600 hover:bg-green-700">
+            Create New Client
+          </Button>
+        )}
+      </div>
 
       {/* Search and Filter Section */}
       <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-6">
@@ -109,7 +122,7 @@ const ClientListPage = () => {
       {clients.length === 0 ? (
         <p className="text-gray-600 text-center py-8">No clients found or assigned to you.</p>
       ) : (
-        <div className="overflow-x-auto"> {/* Ensures table is scrollable on small screens */}
+        <div className="overflow-x-auto">
           <table className="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
             <thead className="bg-gray-100">
               <tr>
