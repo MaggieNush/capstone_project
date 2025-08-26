@@ -11,8 +11,7 @@ from django.db.models.functions import TruncMonth, TruncWeek, TruncDay
 from django.db import models
 from users.permissions import IsAdminUser, IsSalesperson
 from .models import Order, OrderItem
-from users.models import UserProfile # To filter by salesperson
-
+from users.models import UserProfile 
 class BaseSalesReportView(APIView):
     """
     Base class for sales report generation. Handles common queryset filtering

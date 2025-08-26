@@ -1,7 +1,7 @@
 from django.db import models
-from clients.models import Client  # Import Client model from clients app
-from core.models import Flavor  # Import Flavor model from core app
-from users.models import UserProfile  # Import UserProfile model from users app
+from clients.models import Client
+from core.models import Flavor
+from users.models import UserProfile
 
 class Order(models.Model):
     """
@@ -21,7 +21,8 @@ class Order(models.Model):
     )
 
     order_date = models.DateTimeField(auto_now_add=True)
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    # total_amount will be calculated by the serializer after order items are added
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     payment_status = models.CharField(
         max_length=20,
         choices=PAYMENT_STATUS_CHOICES,
@@ -40,14 +41,14 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items')
     flavor = models.ForeignKey(Flavor, on_delete=models.PROTECT, related_name='order_items')
     quantity_liters = models.DecimalField(max_digits=10, decimal_places=2)
-    price_per_liter = models.DecimalField(max_digits=10, decimal_places=2)
-    item_total = models.DecimalField(max_digits=10, decimal_places=2) # Calculated as quantity_liters * price_per_liter
+    price_per_liter_at_sale = models.DecimalField(max_digits=10, decimal_places=2)
+    item_total = models.DecimalField(max_digits=10, decimal_places=2) # Calculated as quantity_liters * price_per_liter_at_sale
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.quantity}L of {self.flavor.name} for Order{self.order.id}"
-    
+        return f"{self.quantity_liters}L of {self.flavor.name} for Order{self.order.id}" # Corrected quantity reference
+
 class Payment(models.Model):
     """"
     Records payments by a client
@@ -55,10 +56,10 @@ class Payment(models.Model):
     """
     client = models.ForeignKey(Client, on_delete=models.PROTECT, related_name='payments')
     order = models.ForeignKey(
-        Order, 
-        on_delete=models.SET_NULL, # If order is deleted, payment remains but unlinked 
-        related_name='payments', 
-        null=True, 
+        Order,
+        on_delete=models.SET_NULL, # If order is deleted, payment remains but unlinked
+        related_name='payments',
+        null=True,
         blank=True
     )
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2)

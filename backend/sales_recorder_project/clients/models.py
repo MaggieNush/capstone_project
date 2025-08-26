@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import UserProfile # Import UserProfile model from users app
+from users.models import UserProfile 
 
 class Client(models.Model):
     """"
@@ -36,6 +36,14 @@ class Client(models.Model):
         max_length=20, 
         choices=CLIENT_STATUS_CHOICES,
         default='pending' # new clients start with pending status
+    )
+
+    requested_by_salesperson = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='requested_clients'
     )
 
     created_at = models.DateTimeField(auto_now_add=True)

@@ -1,10 +1,12 @@
 from rest_framework import serializers
 from django.db import transaction
 from django.db.models import Sum, F # Import Sum and F objects for calculations
-from .models import Order, OrderItem, Payment, Flavor, Client
-from core.serializers import FlavorSerializer # Import FlavorSerializer
-from clients.serializers import ClientSerializer # Import ClientSerializer
-from users.serializers import UserProfileSerializer # Import UserProfileSerializer (for salesperson info)
+from .models import Order, OrderItem, Payment 
+from core.models import Flavor 
+from clients.models import Client 
+from core.serializers import FlavorSerializer
+from clients.serializers import ClientSerializer
+from users.serializers import UserProfileSerializer 
 
 class OrderItemSerializer(serializers.ModelSerializer):
     """
@@ -16,7 +18,6 @@ class OrderItemSerializer(serializers.ModelSerializer):
         source='flavor',
         write_only=True # Only allow writing the ID
     )
-    # item_total is read-only, calculated on save
 
     class Meta:
         model = OrderItem
@@ -61,7 +62,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         order_items_data = validated_data.pop('order_items')
-        
+
         request = self.context.get('request')
         user_profile = request.user.profile
 
@@ -84,7 +85,7 @@ class OrderSerializer(serializers.ModelSerializer):
                     order=order,
                     flavor=flavor,
                     quantity_liters=quantity,
-                    price_per_liter_at_sale=price_per_liter, # Store the price at time of sale
+                    price_per_liter_at_sale=price_per_liter, 
                     item_total=item_total
                 )
                 total_order_amount += item_total
@@ -95,7 +96,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         # Allow updating order_items (e.g., adding/removing items)
-        # This implementation allows full replacement of order_items.
+        # Allows full replacement of order_items.
         # For more complex updates (partial item updates), more logic would be needed.
         order_items_data = validated_data.pop('order_items', [])
 
@@ -112,15 +113,14 @@ class OrderSerializer(serializers.ModelSerializer):
             for item_data in order_items_data:
                 flavor = item_data['flavor']
                 quantity = item_data['quantity_liters']
-                price_per_liter = flavor.base_price_per_liter # Use current price for updates too, or keep old?
-                                                            # For simplicity, using current. Could be a business rule.
+                price_per_liter = flavor.base_price_per_liter 
                 item_total = quantity * price_per_liter
 
                 OrderItem.objects.create(
                     order=instance,
                     flavor=flavor,
                     quantity_liters=quantity,
-                    price_per_liter_at_sale=price_per_liter,
+                    price_per_liter_at_sale=price_per_liter, 
                     item_total=item_total
                 )
                 total_order_amount += item_total

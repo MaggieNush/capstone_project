@@ -7,7 +7,6 @@ class User(AbstractUser):
     Custom user model that extends the default Django user model.
     This allows for additional fields and methods specific to the application.
     """
-    # Add any additional fields here if needed
     pass
 
 class UserProfile(models.Model):

@@ -8,5 +8,5 @@ urlpatterns = [
     path('api/v1/auth/', include('users.urls')), # Include user-related endpoints
     path('api/v1/auth/login/', obtain_auth_token), # Token authentication endpoint
     path('api/v1/', include('sales.urls')), # Include sales-related endpoints ie orders and payments
-    path('api/v1/core/', include('core.urls')), # Include core-related endpoints
+    path('api/v1/', include('core.urls')), # Include core-related endpoints
 ]

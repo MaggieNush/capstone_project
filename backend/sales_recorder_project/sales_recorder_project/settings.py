@@ -87,7 +87,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'http://127.0.0.1:5173',
 
-    # Add frontend URL here
+    # I'll add deployed frontend URL here
 ]
 
 ROOT_URLCONF = 'sales_recorder_project.urls'
