@@ -3,13 +3,21 @@ from django.contrib.auth import authenticate
 from .models import User, UserProfile
 from rest_framework.authtoken.models import Token
 
+
+class MinimalUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username']
+
 class UserProfileSerializer(serializers.ModelSerializer):
     """
     Serializer for the UserProfile model.
     """
+    user = MinimalUserSerializer(read_only=True)
+
     class Meta:
         model = UserProfile
-        fields = ('id', 'role') # Expose role and id of the user profile
+        fields = ('id', 'role', 'user') # Expose role, id and user 
 
 class UserSerializer(serializers.ModelSerializer):
     """

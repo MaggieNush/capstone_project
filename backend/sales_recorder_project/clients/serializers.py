@@ -37,10 +37,21 @@ class ClientSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             'id', 'outstanding_balance', 'created_at', 'updated_at',
-            'is_new_client', # Managed by backend logic
-            'status', # Managed by backend logic/admin
+            'is_new_client', 
+            'status', 
             'requested_by_salesperson' # Set by viewset, read-only for incoming serializer data
         ]
+
+    def to_representation(self, instance):
+        """
+        Add outstanding_balance to the representation.
+        This is a simplified calculation; a more robust solution would involve
+        aggregating payments and orders.
+        """
+        representation = super().to_representation(instance)
+        # Placeholder for outstanding balance calculation.
+        representation['outstanding_balance'] = '0.00'
+        return representation
 
     def create(self, validated_data):
         request = self.context.get('request')
@@ -65,7 +76,7 @@ class ClientSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         user_profile = request.user.profile
 
-        # Salespersons cannot change status or assigned_salesperson (handled by permissions and here)
+        # Salespersons cannot change status or assigned_salesperson (handled by permissions)
         if user_profile.role == 'salesperson':
             validated_data.pop('status', None)
             validated_data.pop('assigned_salesperson', None)
