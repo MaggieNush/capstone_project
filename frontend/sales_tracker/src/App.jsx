@@ -13,6 +13,7 @@ import RecordNewSalePage from './components/sales/RecordNewSalePage';
 import SalesReportsPage from './components/sales/SalesReportsPage';
 import RequestNewClientPage from './components/clients/RequestNewClientPage';
 import EditClientPage from './components/clients/EditClient';
+import ManageSalespersonsPage from './components/admin/ManageSalespersonsPage';
 import useAuthStore from './store/authStore'; 
 import './index.css'; 
 
@@ -45,7 +46,7 @@ function App() {
 
             {/* Admin specific routes */}
             <Route path="/pending-clients" element={<PendingClientsPage />} /> {/* PendingClientsPage for viewing pending clients */}
-            <Route path="/manage-salespersons" element={<h2 className="text-2xl font-bold">Manage Salespersons Page (Coming Soon)</h2>} />
+            <Route path="/manage-salespersons" element={<ManageSalespersonsPage />} /> {/* ManageSalespersonsPage for managing salespersons */}
             <Route path="/manage-flavors" element={<h2 className="text-2xl font-bold">Manage Flavors Page (Coming Soon)</h2>} />
             <Route path="/overall-reports" element={<h2 className="text-2xl font-bold">Overall Reports Page (Coming Soon)</h2>} />
           </Route>
