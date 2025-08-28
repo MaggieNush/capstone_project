@@ -259,7 +259,7 @@ Git
 Backend Setup (Django)
 Clone the repository:
 
-git clone <your-repository-url>
+git clone (https://github.com/MaggieNush/capstone_project.git)
 cd sales_recorder_backend # Navigate into your backend directory
 
 Create and activate a virtual environment:
