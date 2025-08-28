@@ -66,7 +66,7 @@ class DailySalesReportView(BaseSalesReportView):
             return Response({"detail": "Invalid date format. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Get base queryset filtered by user role
-        queryset = self.get_queryset_base().filter(order_date=report_date)
+        queryset = self.get_queryset_base().filter(order_date__date=report_date)
 
         # Admin can filter by specific salesperson - ensure request.user.profile exists
         if hasattr(request.user, 'profile') and request.user.profile.role == 'admin':
@@ -86,7 +86,7 @@ class DailySalesReportView(BaseSalesReportView):
                 order.id,
                 order.client.name,
                 order.salesperson.user.username,
-                order.order_date,
+                order.order_date.strftime('%Y-%m-%d'),
                 order.total_amount,
                 order.payment_status,
                 order.total_liters_sold if order.total_liters_sold is not None else 0
@@ -115,7 +115,7 @@ class WeeklySalesReportView(BaseSalesReportView):
         if start_date > end_date:
             return Response({"detail": "Start date cannot be after end date."}, status=status.HTTP_400_BAD_REQUEST)
 
-        queryset = self.get_queryset_base().filter(order_date__range=[start_date, end_date])
+        queryset = self.get_queryset_base().filter(order_date__date__range=[start_date, end_date])
 
         # Admin can filter by specific salesperson - ensure request.user.profile exists
         if hasattr(request.user, 'profile') and request.user.profile.role == 'admin':
