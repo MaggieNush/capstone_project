@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import useAuthStore from '../store/authStore';
-import Button from '../components/common/Button';
-import Input from '../components/common/Input'; 
+import useAuthStore from '../../store/authStore';
+import Button from '../common/Button';
+import Input from '../common/Input'; 
 import { format } from 'date-fns'; 
 
 const SalesReportsPage = () => {
   const token = useAuthStore((state) => state.token);
   const isAdmin = useAuthStore((state) => state.isAdmin());
 
-  const [reportType, setReportType] = useState('daily'); // 'daily', 'weekly', 'monthly', 'yearly'
+  const [reportType, setReportType] = useState('daily'); 
   const [currentDate, setCurrentDate] = useState(format(new Date(), 'yyyy-MM-dd'));
-  const [startDate, setStartDate] = useState(format(new Date(), 'yyyy-MM-dd')); // For weekly/monthly range
-  const [endDate, setEndDate] = useState(format(new Date(), 'yyyy-MM-dd')); // For weekly/monthly range
-  const [year, setYear] = useState(new Date().getFullYear().toString()); // For monthly/yearly
-  const [month, setMonth] = useState((new Date().getMonth() + 1).toString().padStart(2, '0')); // For monthly
+  const [startDate, setStartDate] = useState(format(new Date(), 'yyyy-MM-dd')); 
+  const [endDate, setEndDate] = useState(format(new Date(), 'yyyy-MM-dd')); 
+  const [year, setYear] = useState(new Date().getFullYear().toString()); 
+  const [month, setMonth] = useState((new Date().getMonth() + 1).toString().padStart(2, '0')); 
 
   const [salespersonFilterId, setSalespersonFilterId] = useState(''); // Admin can filter by salesperson
   const [salespersons, setSalespersons] = useState([]); // List of salespersons for the filter dropdown

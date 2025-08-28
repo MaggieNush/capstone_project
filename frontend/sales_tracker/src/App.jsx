@@ -9,18 +9,15 @@ import ClientListPage from './components/clients/ClientListPage';
 import ClientDetailPage from './components/clients/ClientDetailPage'; 
 import CreateClientPage from './components/clients/CreateClientPage';
 import PendingClientsPage from './components/clients/PendingClientsPage';
-import RecordNewSalePage from './components/clients/RecordNewSalePage';
-import SalesReportsPage from './sales/SalesReportsPage';
+import RecordNewSalePage from './components/sales/RecordNewSalePage';
+import SalesReportsPage from './components/sales/SalesReportsPage';
+import RequestNewClientPage from './components/clients/RequestNewClientPage';
 import EditClientPage from './components/clients/EditClient';
 import useAuthStore from './store/authStore'; 
 import './index.css'; 
 
 function App() {
-  // Selecting the necessary state and getters from the store
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
-  const isAdmin = useAuthStore((state) => state.isAdmin());
-  const isSalesperson = useAuthStore((state) => state.isSalesperson());
-  const navigate = useNavigate(); // For root redirection
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn); 
 
   return (
       <div className='flex flex-col min-h-screen'>
@@ -39,12 +36,11 @@ function App() {
             <Route path="/clients/new" element={<CreateClientPage />} /> {/* CreateClientPage for adding new clients */}
             <Route path="/clients/:clientId" element={<ClientDetailPage />} /> {/* ClientDetailPage for viewing client details */}
             <Route path="/clients/:clientId/edit" element={<EditClientPage />} /> {/* EditClientPage for editing client details */}
-
             {/* Sales Routes */}
             <Route path="/new-sale" element={<RecordNewSalePage />} />
 
             {/* Salesperson specific routes */}
-            <Route path="/new-client-request" element={<h2 className="text-2xl font-bold">New Client Request Page (Coming Soon)</h2>} />
+            <Route path="/new-client-request" element={<RequestNewClientPage />} />
             <Route path="/sales-reports" element={<SalesReportsPage />} />
 
             {/* Admin specific routes */}

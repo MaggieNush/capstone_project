@@ -1,72 +1,55 @@
-import React, { use, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import Input from '../common/Input';
 import Button from '../common/Button';
-import useAuthStore from '../../store/authStore';
+import useAuthStore from '../../store/authStore'; 
 
 const LoginPage = () => {
+  const navigate = useNavigate(); 
+  const login = useAuthStore((state) => state.login); // Get the login action from Zustand
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Get login information from authStore
-  const login = useAuthStore((state) => state.login);
-  const navigate = useNavigate(); // Initialize navigation hook
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(''); // Clear previous errors
+    setError(''); 
     setLoading(true); // Set loading to true at the start of the API call
 
-    // Debugging logs
-    console.log('---Debugging login payload---');
-    console.log('Username state:', username);
-    console.log('Password state:', password);
-    const payload = { username, password };
-    console.log('Raw payload object:', payload);
-    const jsonPayload = JSON.stringify(payload);
-    console.log('JSON payload:', jsonPayload);
-    console.log('---End of Debugging Logs---');
-
+    console.log('Attempting login with:', { username, password });
 
     try {
-      // Django API login endpoint
       const response = await fetch('http://localhost:8000/api/v1/auth/login/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: jsonPayload, // Use the JSON payload directly
+        body: JSON.stringify({ username, password }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // Handle successful login
         console.log('Login successful:', data);
+        // Extract necessary user data and token from the backend response
+        const { token, user_id, username: fetchedUsername, role } = data; // Destructure role
 
-        // Store token and user role (e.g., using Zustand)
-        const userData = {
-            id: data.user_id,
-            username: data.username,
-            role: data.role, // Assuming the API returns a role field
-        };
-        login(data.token, userData); // Call the login action from authStore
+        // Store token and user data (including role) in Zustand
+        login(token, { id: user_id, username: fetchedUsername, role }); // Pass role to Zustand
 
-        // Redirect based on user role
-        if (userData.role === 'admin') {
-            navigate('/admin-dashboard'); // Redirect to admin dashboard
-        } else if (userData.role === 'salesperson') {
-            navigate('/salesperson-dashboard'); // Redirect to salesperson dashboard
+        // Redirect based on role
+        if (role === 'admin') {
+          navigate('/admin-dashboard', { replace: true });
+        } else if (role === 'salesperson') {
+          navigate('/salesperson-dashboard', { replace: true });
         } else {
-            // Fallbacks for unexpected roles
-            setError('Unexpected user role. Please contact support.');
-            useAuthStore.getState().logout(); // Clear session if role is unexpected
+          // Fallback or specific error for unexpected roles
+          setError('Unexpected user role. Please contact support.');
+          useAuthStore.getState().logout(); // Log out if role is unexpected
         }
       } else {
-        // Handle login errors
-        // Check for specific error messages from Django REST Framework
         setError(data.detail || data.non_field_errors?.[0] || 'Login failed. Please check your credentials.');
         console.error('Login error:', data);
       }
@@ -80,20 +63,18 @@ const LoginPage = () => {
 
   return (
     <div className='bg-white p-8 rounded-lg shadow-md w-full max-w-md'>
-      {/* Updated title for consistency */}
       <h2 className='text-3xl font-bold text-center text-gray-800 mb-6'>Login to Sales Recorder</h2>
       <form onSubmit={handleSubmit}>
         <Input
           label="Username"
           id="username"
-          type="text" // Explicitly setting type for username
+          type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           placeholder='Enter your username'
           required
         />
 
-        {/* Ensures password characters are hidden */}
         <Input
           label="Password"
           id="password"
@@ -104,7 +85,6 @@ const LoginPage = () => {
           required
         />
 
-        {/* Adjusted margin for better spacing */}
         {error && <p className='text-red-500 text-sm mb-4'>{error}</p>}
 
         <Button type="submit" disabled={loading} className='w-full'>

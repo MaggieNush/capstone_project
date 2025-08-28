@@ -19,7 +19,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null; // Don't render anything if the modal is not open
 
   return (
-    // Backdrop for the modal, covers the entire screen
+    // Covers the entire screen
     <div
       className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 p-4"
       onClick={onClose} // Closes the modal when clicking on the backdrop

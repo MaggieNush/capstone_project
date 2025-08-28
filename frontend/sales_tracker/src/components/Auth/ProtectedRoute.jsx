@@ -3,23 +3,27 @@ import { Navigate, Outlet } from "react-router-dom";
 import useAuthStore from "../../store/authStore";
 
 const ProtectedRoute = ({ allowedRoles }) => {
-    const isAuthenticated = useAuthStore((state) => state.isAuthenticated())
+    const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
     const userRole = useAuthStore((state) => state.user?.role); // Safely get the user's role
 
-    if (!isAuthenticated) {
-        // If not authenticated, redirect to login page
+    // If not logged in, redirect to login page
+  if (!isLoggedIn()) {
+    return <Navigate to="/" replace />;
+  }
 
-        return <Navigate to="/" replace />;
+  // If logged in redirect to respective dashboards
+  if (allowedRoles && !allowedRoles.includes(userRole)) {
+    if (userRole === 'admin') {
+        return <Navigate to="/admin-dashboard" replace />;
+    } else if (userRole === 'salesperson') {
+        return <Navigate to="/salesperson-dashboard" replace />;
     }
+    // Fallback if role is not recognized or no specific redirect
+    return <Navigate to="/" replace />; 
+  }
 
-    if (allowedRoles && !allowedRoles.includes(userRole)) {
-        // If user is not allowed, redirect to login page
-        console.warn(`Access denied for role: ${userRole}`);
-        return <Navigate to="/" replace />;
-    }
-
-    // If authenticated and authorized, render the child routes
-    return <Outlet />;
+  // If logged in and role is allowed, render the child routes
+  return <Outlet />;
 };
 
 export default ProtectedRoute;
